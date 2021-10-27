@@ -4,7 +4,7 @@
   become: true
   
   environment:
-    master_ip: 192.168.2.128
+    master_ip: 192.168.2.129
   
   tasks:
    - name: Check if K3s service is already running
