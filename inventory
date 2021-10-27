@@ -1,0 +1,14 @@
+[k3s-master]
+master ansible_host=192.168.2.129
+
+[k3s-workers]
+worker1 ansible_host=192.168.2.130
+worker2 ansible_host=192.168.2.131
+
+[k3s:children]
+k3s-master
+k3s-workers
+
+[k8s:vars]
+ansible_user=vagrant
+ansible_ssh_private_key_file=insecure_private_key
