@@ -2,28 +2,27 @@
 - name: Setup Master Node
   hosts: k3s-master
   become: true
-  
-  environment:
-    master_ip: 192.168.2.129
-  
+
   tasks:
-   - name: Check if K3s service is already running
-     stat:
+    - name: Check if K3s service is already running
+      stat:
         path: "/etc/system/k3s.service"
       register: k3s_service
   
-   - name: Download and run Rancher K3s Install Script
-     shell: curl -sfL https://get.k3s.io | sh -
-     when: k3s_service.stat.exists == False
+    - name: Download and run Rancher K3s Install Script
+      shell: curl -sfL https://get.k3s.io | sh -
+      when: k3s_service.stat.exists == False
      
-   - name: Copy join Token
-     command: cat /var/lib/rancher/k3s/server/node-token
-     register: join_token
+    - name: Copy join Token
+      command: cat /var/lib/rancher/k3s/server/node-token
+      register: join_token
      
 - name: Setup Worker Nodes
   hosts: k3s-workers
   become: true
+  vars:
+   master_ip: 192.168.2.129
    
-    tasks:
-     - name: Download and run Rancher K3s Install Script
-       shell: curl -sfL https://get.k3s.io | K3S_URL=https://{{master_ip}}:6443 K3S_TOKEN={{join_token.stdout}} sh -
+  tasks:
+    - name: Download and run Rancher K3s Install Script
+      shell: curl -sfL https://get.k3s.io | K3S_URL=https://{{master_ip}}:6443 K3S_TOKEN={{hostvars.master.join_token.stdout}} sh -
